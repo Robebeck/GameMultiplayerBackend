@@ -24,3 +24,6 @@ Starting Game
 All users within the same lobby, stored as a list on server side join a game session.  At the start of game a websocket session
 is started by the user on the client side when they press the start game button in the UI.  The game is loaded after this
 websocket handshake is accepted, and at this point client and server interact without http request response needed.
+
+Use Case Diagram
+https://github.com/Robebeck/GameMultiplayerBackend/blob/main/UseCaseDiagram.jpg
