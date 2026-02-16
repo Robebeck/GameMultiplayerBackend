@@ -27,3 +27,18 @@ websocket handshake is accepted, and at this point client and server interact wi
 
 Use Case Diagram
 https://github.com/Robebeck/GameMultiplayerBackend/blob/main/UseCaseDiagram.jpg
+
+
+
+Software Requirements table
+
+| ID | Requirement |
+|---:|-------------|
+| 1 | The system shall support account registration and authentication using a username and password stored in a persistent database. |
+| 2 | The system shall allow authenticated clients to create a game lobby and generate a unique lobby identifier. |
+| 3 | The system shall allow authenticated clients to join an existing lobby using a valid lobby identifier and shall reject invalid or full lobbies. |
+| 4 | The system shall create a game session from a lobby and shall initialize a single authoritative game state on the server for that session. |
+| 5 | The system shall accept player commands for a game session and shall validate each command against the current server-authoritative game state. |
+| 6 | The system shall update the authoritative game state only when a validated command is accepted and shall record an event describing the state change. |
+| 7 | The system shall broadcast accepted events (or updated state snapshots) to all connected clients in the same game session. |
+| 8 | The system shall reject and report an error for any command that is invalid, out-of-turn, unauthorized, or inconsistent with the authoritative state, without modifying the authoritative game state. |
