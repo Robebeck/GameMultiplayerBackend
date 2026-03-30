@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Underleaf Web Prototype</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="background">
+        <div class="blob blob1"></div>
+        <div class="blob blob2"></div>
+    </div>
+    <div class="app-container">
+        <header>
+            <h1>Underleaf <span>Backend Prototype</span></h1>
+            <div class="status-indicator">
+                <div class="dot" id="ws-status-dot"></div>
+                <span id="ws-status-text">Disconnected</span>
+            </div>
+        </header>
+
+        <main class="grid">
+            <section class="panel actions-panel">
+                <h2>Game Actions</h2>
+                <p>Send simulated requests to the game server via WebSocket.</p>
+                
+                <div class="action-card">
+                    <h3>Move Action</h3>
+                    <p>Request player movement.</p>
+                    <button id="btn-move" class="primary-btn">Send MOVE Request</button>
+                </div>
+
+                <div class="action-card">
+                    <h3>Play Card</h3>
+                    <p>Request to play a specific card in combat.</p>
+                    <button id="btn-card" class="secondary-btn">Send CARD Request</button>
+                </div>
+            </section>
+
+            <section class="panel log-panel">
+                <div class="log-header">
+                    <h2>Server Communications</h2>
+                    <button id="btn-clear" class="ghost-btn">Clear Log</button>
+                </div>
+                <div class="log-container" id="log-container">
+                    <!-- log entries appended here via JS -->
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <script src="/static/app.js"></script>
+</body>
+</html>
