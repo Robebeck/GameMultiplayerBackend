@@ -20,8 +20,45 @@
                 <span id="ws-status-text">Disconnected</span>
             </div>
         </header>
+        
+        <div class="identity-panel">
+            <label for="username-input">Login:</label>
+            <input type="text" id="username-input" placeholder="Username" class="input-field" />
+            <input type="password" id="password-input" placeholder="Password" class="input-field" />
+            <button id="btn-identify" class="primary-btn">Log In</button>
+            <span id="identity-status" class="status-badge offline">Not Logged In</span>
+        </div>
 
-        <main class="grid">
+        <main class="grid three-cols">
+            <section class="panel friends-panel">
+                <h2>Social & Friends</h2>
+                
+                <div class="add-friend-section">
+                    <input type="text" id="add-friend-username" placeholder="Friend Username" class="input-field" />
+                    <button id="btn-add-friend" class="secondary-btn">Send Request</button>
+                </div>
+                
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="tab-friends">Friends</button>
+                    <button class="tab-btn" data-tab="tab-requests">Requests</button>
+                    <button class="tab-btn" data-tab="tab-blocked">Blocked</button>
+                </div>
+                
+                <div class="tab-content-container">
+                    <div class="tab-content active" id="tab-friends">
+                        <!-- populated by js -->
+                    </div>
+                    <div class="tab-content" id="tab-requests">
+                        <!-- populated by js -->
+                    </div>
+                    <div class="tab-content" id="tab-blocked">
+                        <!-- populated by js -->
+                    </div>
+                </div>
+                
+                <button id="btn-refresh-friends" class="ghost-btn" style="margin-top: 10px; width: 100%;">Refresh Lists</button>
+            </section>
+
             <section class="panel actions-panel">
                 <h2>Game Actions</h2>
                 <p>Send simulated requests to the game server via WebSocket.</p>
@@ -29,19 +66,19 @@
                 <div class="action-card">
                     <h3>Move Action</h3>
                     <p>Request player movement.</p>
-                    <button id="btn-move" class="primary-btn">Send MOVE Request</button>
+                    <button id="btn-move" class="primary-btn">Send MOVE</button>
                 </div>
 
                 <div class="action-card">
                     <h3>Play Card</h3>
                     <p>Request to play a specific card in combat.</p>
-                    <button id="btn-card" class="secondary-btn">Send CARD Request</button>
+                    <button id="btn-card" class="secondary-btn">Send CARD</button>
                 </div>
             </section>
 
             <section class="panel log-panel">
                 <div class="log-header">
-                    <h2>Server Communications</h2>
+                    <h2>Server Comms</h2>
                     <button id="btn-clear" class="ghost-btn">Clear Log</button>
                 </div>
                 <div class="log-container" id="log-container">

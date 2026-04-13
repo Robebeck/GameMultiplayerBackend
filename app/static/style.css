@@ -10,6 +10,7 @@
     --text-muted: #9ca3af;
     --success: #10b981;
     --error: #ef4444;
+    --warning: #f59e0b;
 }
 
 * {
@@ -67,7 +68,7 @@ body {
 }
 
 .app-container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 2rem;
     height: 100vh;
@@ -79,7 +80,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     padding: 1rem 2rem;
     background: var(--panel-bg);
     backdrop-filter: blur(12px);
@@ -120,12 +121,60 @@ h1 span {
     box-shadow: 0 0 10px var(--success);
 }
 
+.identity-panel {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1rem 2rem;
+    background: var(--panel-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--panel-border);
+    border-radius: 16px;
+}
+
+.identity-panel label {
+    font-weight: 600;
+}
+
+.input-field {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--panel-border);
+    color: var(--text-main);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-family: inherit;
+    outline: none;
+}
+.input-field:focus {
+    border-color: var(--primary);
+}
+
+.identity-panel .primary-btn {
+    width: auto;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+.status-badge.offline { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+.status-badge.online { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+.status-badge.pending { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
+.status-badge.blocked { background: rgba(156, 163, 175, 0.2); color: #d1d5db; }
+
 .grid {
     display: grid;
     grid-template-columns: 350px 1fr;
     gap: 2rem;
     flex: 1;
     min-height: 0;
+}
+
+.grid.three-cols {
+    grid-template-columns: 350px 350px 1fr;
 }
 
 .panel {
@@ -150,6 +199,124 @@ h1 span {
     margin-bottom: 1.5rem;
 }
 
+/* Friends Section Styles */
+.add-friend-section {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+.add-friend-section .input-field {
+    flex: 1;
+    width: 100%;
+}
+.add-friend-section .secondary-btn {
+    width: auto;
+    padding: 0.5rem 1rem;
+}
+
+.tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--panel-border);
+    padding-bottom: 0.5rem;
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s;
+    width: auto;
+}
+
+.tab-btn:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-btn.active {
+    color: var(--text-main);
+    background: rgba(99, 102, 241, 0.15);
+}
+
+.tab-content-container {
+    flex: 1;
+    overflow-y: auto;
+    position: relative;
+    padding-right: 0.5rem;
+}
+.tab-content-container::-webkit-scrollbar {
+    width: 6px;
+}
+.tab-content-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+.tab-content {
+    display: none;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.tab-content.active {
+    display: flex;
+}
+
+.friend-item {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--panel-border);
+    padding: 0.75rem;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.friend-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.friend-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.friend-id {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.friend-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.action-icon-btn {
+    background: transparent;
+    border: 1px solid var(--panel-border);
+    color: var(--text-main);
+    width: auto;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+    border-radius: 4px;
+}
+.action-icon-btn:hover {
+    background: rgba(255,255,255,0.1);
+}
+.action-icon-btn.accept:hover { background: rgba(16, 185, 129, 0.3); border-color: var(--success); }
+.action-icon-btn.reject:hover { background: rgba(239, 68, 68, 0.3); border-color: var(--error); }
+.action-icon-btn.invite:hover { background: rgba(99, 102, 241, 0.3); border-color: var(--primary); }
+.action-icon-btn.block:hover  { background: rgba(156, 163, 175, 0.3); }
+
+/* Card styles */
 .action-card {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.05);
@@ -286,6 +453,12 @@ button {
     color: #fee2e2;
 }
 
+.log-entry.info {
+    background: rgba(245, 158, 11, 0.1);
+    border-left-color: var(--warning);
+    color: #fef3c7;
+}
+
 .log-timestamp {
     display: block;
     font-size: 0.7rem;
@@ -302,8 +475,8 @@ button {
     to { opacity: 1; transform: translateY(0); }
 }
 
-@media (max-width: 900px) {
-    .grid {
+@media (max-width: 1100px) {
+    .grid.three-cols {
         grid-template-columns: 1fr;
     }
     .panel.log-panel {
