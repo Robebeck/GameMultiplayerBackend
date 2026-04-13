@@ -56,7 +56,6 @@ websocket handshake is accepted, and at this point client and server interact wi
 
 ## Database Schema (ERD)
 
-Below is the exact architecture of the prototype's database. Because this is written in Mermaid syntax, GitHub will automatically render this into a beautiful, always-accurate visual diagram on the repo page!
 
 ```mermaid
 erDiagram
