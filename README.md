@@ -5,6 +5,8 @@ Backend for multiplayer client/server logic for Turn Based Strategy Card Game.
 - [Repository Assets](#repository-assets)
   - [App Directory (Active Backend)](./app)
   - [Prototype Directory (Sprint 1 / Early Version)](./prototype)
+- [Sprint 1](https://github.com/users/Robebeck/projects/2)
+- [App README](https://github.com/Robebeck/GameMultiplayerBackend/blob/main/app/readme.txt)
 - [User Stories](#user-stories)
 - [Use Cases](#use-cases)
 - [Software Requirements](#software-requirements)
