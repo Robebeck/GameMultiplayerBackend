@@ -1,0 +1,15 @@
+The sprint board shows the transition of tasks from In Progress to Done over the course of the sprint. 
+Much of the work involving the database schema and the validation logic for friend requests was completed.
+
+One of the primary deliverables is an updated Development Test Interface for the backend. 
+This interface now supports player login, friend request handling, and submitting card or movement actions. 
+These interactions are sent through the interface and logged in real time, with results displayed as text within the HTML page.
+
+One task (“New Player Registration”) was moved back into In Progress after realizing that additional work was required to properly integrate player creation with the database.
+
+These updates significantly improve the ability to test and validate backend functionality without requiring a full front-end implementation. 
+The Development Test Interface enables rapid iteration by allowing direct interaction with backend systems, 
+making it easier to identify issues in real time and verify core gameplay mechanics such as player actions and social interactions.
+
+In the future I would break tasks into smaller subtasks and better estimate time for backend validation and database integration.  I think I need
+to prioritize tasks in a more logical order, if I had handled the database issues before the player registration, I would not need to revist the registration.
