@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // UI Buttons
     const btnIdentify = document.getElementById("btn-identify");
+    const btnRegister = document.getElementById("btn-register");
     const inputUsername = document.getElementById("username-input");
     const inputPassword = document.getElementById("password-input");
     const identityStatus = document.getElementById("identity-status");
@@ -34,6 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     let pendingIdentify = null;
+    let pendingRegister = null;
 
     function connect() {
         if (socket && (socket.readyState === WebSocket.CONNECTING || socket.readyState === WebSocket.OPEN)) {
@@ -52,6 +54,10 @@ document.addEventListener("DOMContentLoaded", () => {
             if (pendingIdentify) {
                 sendRequest("IDENTIFY", pendingIdentify);
                 pendingIdentify = null;
+            }
+            if (pendingRegister) {
+                sendRequest("REGISTER", pendingRegister);
+                pendingRegister = null;
             }
         };
 
@@ -96,6 +102,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function handleServerMessage(data) {
         switch (data.type) {
+            case "REGISTER_SUCCESS":
+                alert("Registration successful! You can now log in.");
+                break;
             case "IDENTIFY_SUCCESS":
                 identityStatus.textContent = "Logged In";
                 identityStatus.className = "status-badge online";
@@ -136,6 +145,21 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             sendRequest("IDENTIFY", pendingIdentify);
             pendingIdentify = null;
+        }
+    });
+
+    btnRegister.addEventListener("click", () => {
+        const username = inputUsername.value;
+        const password = inputPassword.value;
+        if (!username || !password) return;
+        
+        pendingRegister = { username: username, password: password };
+        
+        if (!socket || socket.readyState === WebSocket.CLOSED || socket.readyState === WebSocket.CLOSING) {
+            connect();
+        } else {
+            sendRequest("REGISTER", pendingRegister);
+            pendingRegister = null;
         }
     });
 

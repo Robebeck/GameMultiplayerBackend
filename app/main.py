@@ -121,6 +121,44 @@ async def websocket_endpoint(websocket: WebSocket):
                 action_type = data.get("type", "UNKNOWN")
                 
                 # Handling IDENTIFY separately with credentials
+                if action_type == "REGISTER":
+                    username = data.get("params", {}).get("username")
+                    password = data.get("params", {}).get("password")
+                    
+                    if username and password:
+                        conn = get_db()
+                        cursor = conn.cursor()
+                        cursor.execute('SELECT id FROM players WHERE username = ?', (username,))
+                        row = cursor.fetchone()
+                        
+                        if row:
+                            conn.close()
+                            await websocket.send_text(json.dumps({
+                                "request_id": request_id,
+                                "type": "ERROR",
+                                "status": "error",
+                                "message": "Username already exists."
+                            }))
+                        else:
+                            cursor.execute('INSERT INTO players (username, password, login_state) VALUES (?, ?, 0)', (username, password))
+                            conn.commit()
+                            conn.close()
+                            
+                            await websocket.send_text(json.dumps({
+                                "request_id": request_id,
+                                "type": "REGISTER_SUCCESS",
+                                "status": "success",
+                                "message": f"Successfully registered user {username}"
+                            }))
+                    else:
+                        await websocket.send_text(json.dumps({
+                            "request_id": request_id,
+                            "type": "ERROR",
+                            "status": "error",
+                            "message": "Username and password required for registration."
+                        }))
+                    continue
+                    
                 if action_type == "IDENTIFY":
                     username = data.get("params", {}).get("username")
                     password = data.get("params", {}).get("password")
