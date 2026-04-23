@@ -23,7 +23,7 @@ cursor = conn.cursor()
 cursor.executescript('''
 CREATE TABLE IF NOT EXISTS players(
 id INTEGER PRIMARY KEY AUTOINCREMENT,
-username TEXT NOT NULL,
+username TEXT UNIQUE NOT NULL,
 password TEXT NOT NULL,
 login_state BOOLEAN DEFAULT FALSE
 );
@@ -171,7 +171,24 @@ async def websocket_endpoint(websocket: WebSocket):
                         
                         if row:
                             current_player_id = int(row['id'])
-                            active_connections[current_player_id] = websocket
+                            
+                            # Disconnect old connection if logging in from somewhere else
+                            if current_player_id in active_connections:
+                                old_ws = active_connections[current_player_id]
+                                # Overwrite immediately so the old websocket's disconnect handler doesn't clean up the new session
+                                active_connections[current_player_id] = websocket
+                                try:
+                                    await old_ws.send_text(json.dumps({
+                                        "request_id": request_id,
+                                        "type": "ERROR",
+                                        "status": "error",
+                                        "message": "Disconnected: Logged in from another location."
+                                    }))
+                                    await old_ws.close()
+                                except Exception:
+                                    pass
+                            else:
+                                active_connections[current_player_id] = websocket
                             
                             # Update DB login state
                             cursor.execute('UPDATE players SET login_state = 1 WHERE id = ?', (current_player_id,))
@@ -237,6 +254,9 @@ async def websocket_endpoint(websocket: WebSocket):
                     await websocket.send_text(json.dumps(response))
                 elif action_type == "FRIEND_REQUEST":
                     target_username = data.get("params", {}).get("target_username")
+                    if not target_username:
+                        await websocket.send_text(json.dumps({"request_id": request_id, "type": "ERROR", "status": "error", "message": "Missing target username."}))
+                        continue
                     
                     conn = get_db()
                     cur = conn.cursor()
@@ -276,6 +296,10 @@ async def websocket_endpoint(websocket: WebSocket):
                 
                 elif action_type == "FRIEND_ACCEPT":
                     requester_id = data.get("params", {}).get("requester_id")
+                    if requester_id is None:
+                        await websocket.send_text(json.dumps({"request_id": request_id, "type": "ERROR", "status": "error", "message": "Missing requester ID."}))
+                        continue
+                        
                     conn = get_db()
                     cur = conn.cursor()
                     cur.execute('''UPDATE friend_relationships SET status = 'accepted' WHERE requester_id = ? AND receiver_id = ? AND status = 'pending' ''', (requester_id, current_player_id))
@@ -293,6 +317,10 @@ async def websocket_endpoint(websocket: WebSocket):
                     
                 elif action_type == "FRIEND_REJECT" or action_type == "FRIEND_BLOCK":
                     target_id = data.get("params", {}).get("target_id")
+                    if target_id is None:
+                        await websocket.send_text(json.dumps({"request_id": request_id, "type": "ERROR", "status": "error", "message": "Missing target ID."}))
+                        continue
+                        
                     # If reject, target_id is the requester of the pending request we are deleting.
                     # If block, target_id is who we want to block (could be requester or a friend)
                     new_status = 'blocked' if action_type == "FRIEND_BLOCK" else 'rejected'
@@ -358,6 +386,10 @@ async def websocket_endpoint(websocket: WebSocket):
                     
                 elif action_type == "LOBBY_INVITE":
                     friend_id = data.get("params", {}).get("friend_id")
+                    if friend_id is None:
+                        await websocket.send_text(json.dumps({"request_id": request_id, "type": "ERROR", "status": "error", "message": "Missing friend ID."}))
+                        continue
+                        
                     if friend_id in active_connections:
                         await active_connections[friend_id].send_text(json.dumps({
                             "type": "LOBBY_INVITE_RECEIVED",
@@ -374,19 +406,32 @@ async def websocket_endpoint(websocket: WebSocket):
                 
             except json.JSONDecodeError:
                 await websocket.send_text(json.dumps({"type": "ERROR", "error": "Invalid JSON format"}))
+            except sqlite3.Error as e:
+                print(f"Database error: {e}")
+                await websocket.send_text(json.dumps({"request_id": request_id if 'request_id' in locals() else "unknown", "type": "ERROR", "status": "error", "message": "Database error occurred."}))
+            except Exception as e:
+                print(f"Unexpected error: {e}")
+                await websocket.send_text(json.dumps({"request_id": request_id if 'request_id' in locals() else "unknown", "type": "ERROR", "status": "error", "message": "Internal server error."}))
                 
     except WebSocketDisconnect:
+        pass
+    finally:
         if current_player_id is not None:
-            if current_player_id in active_connections:
+            # Only clean up if this websocket is still the active connection for the player
+            if current_player_id in active_connections and active_connections[current_player_id] == websocket:
                 del active_connections[current_player_id]
-            conn = get_db()
-            conn.execute('UPDATE players SET login_state = 0 WHERE id = ?', (current_player_id,))
-            conn.commit()
-            conn.close()
-            await notify_friends(current_player_id, {
-                "type": "FRIEND_STATUS_UPDATE",
-                "data": {
-                    "player_id": current_player_id,
-                    "login_state": False
-                }
-            })
+                try:
+                    conn = get_db()
+                    conn.execute('UPDATE players SET login_state = 0 WHERE id = ?', (current_player_id,))
+                    conn.commit()
+                    conn.close()
+                except Exception as e:
+                    print(f"Error during cleanup DB update: {e}")
+                
+                await notify_friends(current_player_id, {
+                    "type": "FRIEND_STATUS_UPDATE",
+                    "data": {
+                        "player_id": current_player_id,
+                        "login_state": False
+                    }
+                })
